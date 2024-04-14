@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+#include "../s21_string_test.h"
+
+START_TEST(check_const) {
+  char str[][64] = {
+      "HWkA$TA(MJY0)Z3(A#07zaF,yKf(120=", "$9Y20hPJr!M:7Gx@@f1-@1$*]UV93qB}",
+      "m/ymZfLwgY,$S+Luxm#9@8n2;1EW-_?1", "JLjwQX&)ahH!/L_DN*N]VPR!*@J,gy,T",
+      "M46_1xg8Zfky4=ZbVcXtw8rMPw-gi(Yh", "mdhccZNxm$6K_,W8;?yFzdKm{HKLN11g",
+      "5=+n$hBz=VeN]AMA-vbC(HH7/u:?!S@C", "2g&g,ABXa80$VT[mn}ykVwPrjHY-D}7)",
+      "g?Sz=YexHLXidBz!,x8:-tLq{*5aE.uF", "]f1!@9(qeN[fvx],7/Dd)mYJ}Nf1D3;7F"};
+  for (int i = 0; i < 10; i++) {
+    ck_assert_ptr_eq(s21_strchr(str[i], _i), strchr(str[i], _i));
+  }
+}
+END_TEST
+
+START_TEST(check_dyn) {
+  for (int i = 1; i < 127; i++) {
+    *(test_string + i - 1) = i;
+  }
+  *(test_string + 126) = 0;
+  ck_assert_ptr_eq(s21_strchr(test_string, _i), strchr(test_string, _i));
+}
+END_TEST
+
+Suite *strchr_suite(void) {
+  Suite *s = suite_create("STRCHR");
+  TCase *tc_const = tcase_create("Const case");
+  TCase *tc_dyn = tcase_create("Dyn case");
+  tcase_add_checked_fixture(tc_dyn, setup_128, teardown);
+  tcase_add_loop_test(tc_const, check_const, 0, 128);
+  tcase_add_loop_test(tc_dyn, check_dyn, 0, 128);
+  suite_add_tcase(s, tc_const);
+  suite_add_tcase(s, tc_dyn);
+  return s;
+}
